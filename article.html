@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How I reverse-engineered the Class 10 Math Board Paper | StudoAI Blogs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* ========================================= */
+        /* 🚀 STUDOAI: ADVANCED ARTICLE UI */
+        /* ========================================= */
+        
+        :root {
+            --primary: #9333ea; 
+            --primary-hover: #a855f7;
+            --bg-base: #0f172a; 
+            --bg-surface: #1e293b; 
+            --border-light: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-reading: #cbd5e1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-base); color: var(--text-main); overflow-x: hidden; }
+
+        /* --- Navbar (Matches Index) --- */
+        .navbar {
+            position: sticky; top: 0; z-index: 1000;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center;
+        }
+        #progress-bar { position: absolute; bottom: -1px; left: 0; height: 2px; background: var(--primary-hover); width: 0%; transition: width 0.1s ease-out; box-shadow: 0 0 15px var(--primary); }
+        .logo { font-size: 1.5rem; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo span { background: rgba(147, 51, 234, 0.15); color: var(--primary-hover); font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; }
+        .back-btn { color: var(--text-muted); text-decoration: none; font-weight: 600; transition: color 0.2s; display: flex; align-items: center; gap: 8px; }
+        .back-btn:hover { color: #fff; }
+
+        /* --- Article Layout --- */
+        .article-layout {
+            display: flex;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+            gap: 4rem;
+            position: relative;
+        }
+
+        /* --- Floating Action Bar (Left Sidebar) --- */
+        .action-sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-top: 2rem;
+        }
+        .action-btn {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .action-btn:hover { transform: translateY(-3px) scale(1.1); color: var(--primary-hover); border-color: var(--primary); box-shadow: 0 5px 15px rgba(147, 51, 234, 0.2); }
+        .action-count { text-align: center; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-top: -10px; }
+
+        /* --- Main Reading Area --- */
+        .article-content { max-width: 680px; width: 100%; }
+
+        /* Article Header */
+        .article-tag { color: var(--primary-hover); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: inline-block; }
+        .article-title { font-size: 3rem; font-weight: 800; line-height: 1.2; margin-bottom: 1.5rem; color: #fff; }
+        
+        .article-meta { display: flex; align-items: center; gap: 15px; padding-bottom: 2rem; border-bottom: 1px solid var(--border-light); margin-bottom: 3rem; }
+        .author-avatar { width: 45px; height: 45px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; }
+        .author-details strong { display: block; color: #fff; font-size: 1rem; }
+        .author-details span { color: var(--text-muted); font-size: 0.85rem; }
+
+        /* Typography & Body Text */
+        .article-body { font-size: 1.15rem; line-height: 1.8; color: var(--text-reading); }
+        
+        /* Merriweather font specifically for reading paragraphs */
+        .article-body p { font-family: 'Merriweather', serif; margin-bottom: 2rem; }
+        
+        .article-body h2 { font-family: 'Inter', sans-serif; font-size: 1.8rem; font-weight: 800; color: #fff; margin: 3rem 0 1.5rem 0; }
+        .article-body h3 { font-family: 'Inter', sans-serif; font-size: 1.4rem; font-weight: 600; color: #fff; margin: 2rem 0 1rem 0; }
+        
+        .article-body ul { margin-bottom: 2rem; padding-left: 2rem; }
+        .article-body li { font-family: 'Merriweather', serif; margin-bottom: 0.8rem; }
+
+        /* Premium Blockquotes */
+        .article-body blockquote {
+            border-left: 4px solid var(--primary);
+            background: linear-gradient(90deg, rgba(147, 51, 234, 0.1) 0%, rgba(30, 41, 59, 0) 100%);
+            padding: 1.5rem 2rem;
+            margin: 2.5rem 0;
+            border-radius: 0 12px 12px 0;
+            font-size: 1.3rem;
+            font-style: italic;
+            color: #fff;
+        }
+
+        /* --- Author Card Footer --- */
+        .author-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 4rem;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .author-card-info h3 { color: #fff; margin-bottom: 5px; }
+        .author-card-info p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+        .author-rank { background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; color: var(--primary-hover); font-weight: bold; display: inline-block; margin-top: 10px; }
+
+        @media (max-width: 900px) {
+            .article-layout { flex-direction: column; padding: 2rem 5%; gap: 2rem; }
+            .action-sidebar { position: fixed; bottom: 0; left: 0; top: auto; width: 100%; flex-direction: row; justify-content: space-around; background: var(--bg-surface); padding: 10px; border-top: 1px solid var(--border-light); z-index: 100; }
+            .action-count { display: none; }
+            .article-title { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back to Hub</a>
+        <a href="index.html" class="logo"><i class="fa-solid fa-bolt"></i> StudoAI <span>Blogs</span></a>
+        <div id="progress-bar"></div>
+    </nav>
+
+    <div class="article-layout">
+        
+        <aside class="action-sidebar">
+            <button class="action-btn" id="upvoteBtn"><i class="fa-solid fa-arrow-up"></i></button>
+            <div class="action-count" id="upvoteCount">142</div>
+            
+            <button class="action-btn" onclick="copyLink()"><i class="fa-solid fa-link"></i></button>
+            
+            <button class="action-btn"><i class="fa-regular fa-bookmark"></i></button>
+        </aside>
+
+        <main class="article-content">
+            <header>
+                <span class="article-tag">🔥 Trending Bounty</span>
+                <h1 class="article-title">How I reverse-engineered the Class 10 Math Board Paper.</h1>
+                
+                <div class="article-meta">
+                    <div class="author-avatar"><i class="fa-solid fa-user-ninja"></i></div>
+                    <div class="author-details">
+                        <strong>Akshit</strong>
+                        <span>Published April 25, 2026 • 5 min read</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="article-body">
+                <p>Most students approach the Class 10 Board exams completely wrong. They open the NCERT textbook to page one and try to solve every single question, front to back. By February, they are burned out, exhausted, and terrified of the geometry section.</p>
+                
+                <p>I didn't have time for that. I wanted to build StudoAI while studying, so I needed a hack. I decided to stop studying the <em>book</em>, and start studying the <em>exam</em>.</p>
+
+                <h2>The 80/20 Rule in Mathematics</h2>
+                <p>The Pareto Principle states that 80% of results come from 20% of the effort. In the context of CBSE board exams, this means that a very small pool of concepts generates the vast majority of the high-mark questions.</p>
+
+                <blockquote>
+                    "You are not graded on how many hours you sat at your desk. You are graded on your ability to execute specific mathematical proofs under pressure."
+                </blockquote>
+
+                <p>To prove this, I printed out the last 10 years of Mathematics Standard question papers. I went through them with three different colored highlighters:</p>
+                <ul>
+                    <li><strong>Red:</strong> Questions that appeared almost identically every single year (e.g., Prove that √3 is irrational).</li>
+                    <li><strong>Yellow:</strong> Variations of the same core formula (e.g., Section formula in Coordinate Geometry).</li>
+                    <li><strong>Green:</strong> Wildcard questions that rarely repeat.</li>
+                </ul>
+
+                <h2>The Golden Formulas</h2>
+                <p>Once I finished highlighting, the pattern was shockingly obvious. You don't need to memorize 50 formulas. You need to deeply understand about 8 core mechanics, and learn how examiners try to trick you by twisting the wording.</p>
+                
+                <p>For example, in Quadratic Equations, the discriminant ($b^2 - 4ac$) dictates everything. If you master exactly how the nature of roots connects to word problems, you automatically secure 5-7 marks on every paper.</p>
+
+                <h2>How to apply this today</h2>
+                <p>Stop doing random exercises. Go to the StudoAI Arena, set the filter to "Previous Year Core", and grind the Red and Yellow concepts until you can solve them in your sleep. Once your foundation is bulletproof, then you can worry about the wildcard questions.</p>
+            </div>
+
+            <div class="author-card">
+                <div class="author-avatar" style="width: 60px; height: 60px; font-size: 2rem;"><i class="fa-solid fa-user-ninja"></i></div>
+                <div class="author-card-info">
+                    <h3>Written by Akshit</h3>
+                    <p>Founder of StudoAI. Building tools to make education addictive instead of boring. Usually drinking coffee or debugging CSS.</p>
+                    <span class="author-rank">🏆 Grandmaster • 15,200 XP</span>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Reading Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        });
+
+        // Upvote Interaction
+        const upvoteBtn = document.getElementById('upvoteBtn');
+        const upvoteCount = document.getElementById('upvoteCount');
+        let upvoted = false;
+        let currentVotes = 142;
+
+        upvoteBtn.addEventListener('click', () => {
+            if (!upvoted) {
+                currentVotes++;
+                upvoteBtn.style.color = 'var(--primary)';
+                upvoteBtn.style.borderColor = 'var(--primary)';
+                upvoteBtn.style.background = 'rgba(147, 51, 234, 0.1)';
+            } else {
+                currentVotes--;
+                upvoteBtn.style.color = 'var(--text-muted)';
+                upvoteBtn.style.borderColor = 'var(--border-light)';
+                upvoteBtn.style.background = 'var(--bg-surface)';
+            }
+            upvoted = !upvoted;
+            upvoteCount.innerText = currentVotes;
+        });
+
+        // Copy Link Interaction
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Article link copied to clipboard!");
+        }
+    </script>
+</body>
+</html>
