@@ -8,10 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* ========================================= */
         /* 🚀 STUDOAI: SUBMISSION GATEWAY UI */
-        /* ========================================= */
-        
         :root {
             --primary: #9333ea; 
             --primary-hover: #a855f7;
@@ -116,7 +113,6 @@
         }
         .submit-btn:hover { background: var(--primary-hover); transform: translateY(-3px); box-shadow: var(--glow); }
 
-        /* Mobile Adjustments */
         @media (max-width: 900px) {
             .layout-grid { grid-template-columns: 1fr; gap: 3rem; margin: 2rem auto; }
             .guidelines-section h1 { font-size: 2.2rem; }
@@ -154,8 +150,7 @@
         </div>
 
         <div class="submission-form">
-            <form action="https://formspree.io/f/xyzelqzg" method="POST" id="creatorForm">
-                
+            <form id="creatorForm">
                 <div class="form-group">
                     <label for="username">StudoAI Username</label>
                     <input type="text" id="username" class="form-control" placeholder="e.g. Akshit_Ninja" required>
@@ -190,30 +185,63 @@
 
     </div>
 
-    <script>
-        // Simple UI interaction for the submit button
-        document.getElementById('creatorForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevents page reload for the demo
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // 👉 IMPORTANT: REPLACE THESE WITH YOUR ACTUAL STUDOAI V1 FIREBASE CONFIG DETAILS
+        const firebaseConfig = {
+            apiKey: "AIzaSyCJivdJTeZ2VnDw50Q2ZL3u4AiUj89Nols",
+            authDomain: "smartquiz-f3264.firebaseapp.com",
+            projectId: "smartquiz-f3264",
+            storageBucket: "smartquiz-f3264.firebasestorage.app",
+            messagingSenderId: "657819908694",
+            appId: "1:657819908694:web:ca5bc42a9cf7b142e499f7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.getElementById('creatorForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
             
             const btn = document.getElementById('submitBtn');
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Sending...';
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving to Database...';
             btn.style.opacity = '0.8';
             btn.style.cursor = 'not-allowed';
 
-            // Simulate network request
-            setTimeout(() => {
-                btn.style.background = '#10b981'; // Green success color
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Draft Sent!';
+            // Bundle the data
+            const articleData = {
+                author: document.getElementById('username').value,
+                title: document.getElementById('title').value,
+                category: document.getElementById('category').value,
+                docLink: document.getElementById('docLink').value,
+                upvotes: 0, 
+                status: "published", // Setting to published so it shows up on index.html instantly
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                // Send to Firebase
+                await addDoc(collection(db, "articles"), articleData);
                 
-                // Reset form
+                // Success UI
+                btn.style.background = '#10b981'; 
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Draft Submitted!';
+                
                 setTimeout(() => {
-                    this.reset();
+                    document.getElementById('creatorForm').reset();
                     btn.style.background = 'var(--primary)';
                     btn.innerHTML = 'Submit Draft <i class="fa-solid fa-paper-plane"></i>';
                     btn.style.opacity = '1';
                     btn.style.cursor = 'pointer';
                 }, 3000);
-            }, 1500);
+
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                btn.innerHTML = 'Error! Check Console.';
+                btn.style.background = '#ef4444';
+            }
         });
     </script>
 </body>
