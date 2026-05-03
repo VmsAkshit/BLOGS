@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit an Article | StudoAI Blogs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* ========================================= */
+        /* 🚀 STUDOAI: SUBMISSION GATEWAY UI */
+        /* ========================================= */
+        
+        :root {
+            --primary: #9333ea; 
+            --primary-hover: #a855f7;
+            --bg-base: #0f172a; 
+            --bg-surface: #1e293b; 
+            --border-light: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glow: 0 0 20px rgba(147, 51, 234, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); line-height: 1.6; }
+
+        /* --- Navbar --- */
+        .navbar {
+            padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-light); background: var(--bg-base);
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo span { background: rgba(147, 51, 234, 0.15); color: var(--primary-hover); font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; }
+        .back-btn { color: var(--text-muted); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .back-btn:hover { color: #fff; }
+
+        /* --- Main Layout --- */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 5%;
+        }
+
+        /* --- Left Side: Guidelines --- */
+        .guidelines-section h1 { font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; color: #fff; }
+        .guidelines-section p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem; }
+        
+        .rule-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+        .rule-card h3 { color: #fff; font-size: 1.1rem; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+        .rule-card h3 i { color: var(--primary-hover); }
+        .rule-card p { color: var(--text-muted); font-size: 0.95rem; margin: 0; }
+
+        .xp-bounty-box {
+            background: linear-gradient(145deg, rgba(147, 51, 234, 0.1), rgba(30, 41, 59, 0));
+            border: 1px dashed var(--primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        .xp-bounty-box h2 { color: var(--primary-hover); font-size: 1.8rem; margin-bottom: 5px; }
+
+        /* --- Right Side: Glassmorphic Form --- */
+        .submission-form {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; color: #fff; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
+        .form-group label span { color: var(--text-muted); font-weight: 400; font-size: 0.8rem; }
+        
+        .form-control {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-light);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .form-control:focus { border-color: var(--primary); box-shadow: var(--glow); background: var(--bg-base); }
+        
+        select.form-control { appearance: none; cursor: pointer; }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            margin-top: 1rem;
+        }
+        .submit-btn:hover { background: var(--primary-hover); transform: translateY(-3px); box-shadow: var(--glow); }
+
+        /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .layout-grid { grid-template-columns: 1fr; gap: 3rem; margin: 2rem auto; }
+            .guidelines-section h1 { font-size: 2.2rem; }
+            .submission-form { padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo"><i class="fa-solid fa-bolt"></i> StudoAI <span>Blogs</span></a>
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Cancel</a>
+    </nav>
+
+    <div class="layout-grid">
+        
+        <div class="guidelines-section">
+            <h1>Become a StudoAI Creator.</h1>
+            <p>We are looking for the best study hacks, notes, and exam strategies. Share your knowledge with the community and level up your account.</p>
+
+            <div class="rule-card">
+                <h3><i class="fa-solid fa-robot"></i> No AI Copy-Paste</h3>
+                <p>We use Gemini to scan all submissions. If your article is just generated by ChatGPT, it will be rejected. We want your personal, human experience.</p>
+            </div>
+
+            <div class="rule-card">
+                <h3><i class="fa-solid fa-file-lines"></i> Formatting Matters</h3>
+                <p>Use clear headings, bullet points, and short paragraphs. Write it in a Google Doc and ensure the sharing settings are set to "Anyone with the link can view".</p>
+            </div>
+
+            <div class="xp-bounty-box">
+                <h2>+2,500 XP</h2>
+                <p>Awarded directly to your StudoAI Arena account if your article is selected and published.</p>
+            </div>
+        </div>
+
+        <div class="submission-form">
+            <form action="https://formspree.io/f/xyzelqzg" method="POST" id="creatorForm">
+                
+                <div class="form-group">
+                    <label for="username">StudoAI Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="e.g. Akshit_Ninja" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Article Title</label>
+                    <input type="text" id="title" class="form-control" placeholder="A catchy title for your strategy" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" class="form-control" required>
+                        <option value="" disabled selected>Select the subject...</option>
+                        <option value="science">🧬 Science & Physics</option>
+                        <option value="math">📐 Mathematics</option>
+                        <option value="hacks">🧠 Study Hacks & Focus</option>
+                        <option value="bounty">🎯 Fulfilling a Bounty</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="docLink">Google Doc Link <span>(Must be public)</span></label>
+                    <input type="url" id="docLink" class="form-control" placeholder="https://docs.google.com/document/d/..." required>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Submit Draft <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        // Simple UI interaction for the submit button
+        document.getElementById('creatorForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevents page reload for the demo
+            
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Sending...';
+            btn.style.opacity = '0.8';
+            btn.style.cursor = 'not-allowed';
+
+            // Simulate network request
+            setTimeout(() => {
+                btn.style.background = '#10b981'; // Green success color
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Draft Sent!';
+                
+                // Reset form
+                setTimeout(() => {
+                    this.reset();
+                    btn.style.background = 'var(--primary)';
+                    btn.innerHTML = 'Submit Draft <i class="fa-solid fa-paper-plane"></i>';
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                }, 3000);
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
