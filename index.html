@@ -56,7 +56,42 @@
         .featured-badge { display: inline-block; background: var(--primary); color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 800; margin-bottom: 1rem; text-transform: uppercase; }
         .featured-title { font-size: 3rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem; }
         .featured-excerpt { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 2rem; }
-        
+        /* --- Welcome Hero Banner --- */
+        .hero-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(147, 51, 234, 0.1) 100%);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 3rem 4rem;
+            margin: 3rem auto 1rem auto;
+            max-width: 1400px;
+            width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: ''; position: absolute; top: -50%; right: -10%; width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.2) 0%, transparent 70%); border-radius: 50%;
+        }
+
+        .banner-content { z-index: 1; max-width: 600px; }
+        .banner-tag { color: var(--primary-hover); font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: inline-block; }
+        .banner-title { font-size: 2.8rem; font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 1rem; }
+        .banner-text { color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; }
+
+        .banner-graphic { z-index: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .banner-graphic i { font-size: 6rem; color: var(--primary); filter: drop-shadow(0 0 30px rgba(147, 51, 234, 0.6)); animation: float 6s ease-in-out infinite; }
+
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
+
+        @media (max-width: 900px) {
+            .hero-banner { flex-direction: column; text-align: center; padding: 2.5rem 1.5rem; }
+            .banner-graphic { display: none; }
+            .banner-title { font-size: 2.2rem; }
+        }
         /* --- Dynamic Filtering System --- */
         .filter-nav { display: flex; gap: 15px; overflow-x: auto; padding: 1rem 5%; max-width: 1400px; margin: 0 auto; scrollbar-width: none; }
         .filter-nav::-webkit-scrollbar { display: none; }
@@ -101,6 +136,16 @@
     </nav>
 
 
+    <header class="hero-banner">
+        <div class="banner-content">
+            <span class="banner-tag"><i class="fa-solid fa-sparkles"></i> Welcome to the Hub</span>
+            <h1 class="banner-title">Level up your knowledge.</h1>
+            <p class="banner-text">Read high-level strategies from top students, or publish your own notes to earn massive XP drops in the StudoAI Arena.</p>
+        </div>
+        <div class="banner-graphic">
+            <i class="fa-solid fa-rocket"></i>
+        </div>
+    </header>
     <div class="filter-nav">
         <button class="filter-btn active">Live Feed</button>
         <button class="filter-btn">🧬 Science</button>
