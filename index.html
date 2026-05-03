@@ -171,7 +171,7 @@
                     // Ensure status is published before showing it
                     if(data.status === "published") {
                         const cardHTML = `
-                            <article class="article-card" onclick="window.location.href='article.html?id=${articleId}'">
+                                <article class="article-card" onclick="window.open('article.html?id=${articleId}', '_blank')">
                                 <div class="card-meta">
                                     <span><i class="fa-solid fa-folder-open"></i> ${data.category}</span>
                                 </div>
